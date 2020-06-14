@@ -5,19 +5,17 @@
      Function		: SENSOR_HMC5883L
      Create Date	: 2017/04/27
 ---------------------------------------------------------------------- */
-#ifndef __HMC5883L_FUNCTION__
-#define __HMC5883L_FUNCTION__
 
 #include <stdio.h>
 #include <math.h>
 #include <delay.h>
+#include <datatype_Layer.h>
+#include <swi2c_Layer.h>
+#include <SENSOR_HMC5883L.h>
 
-#include "SENSOR_HMC5883L.h"
-#include "Porting_Layer.h"
 
 
 #define HMC5883L_DEBUG		(0)		/* set "1" to printf debug message */
-
 
 
 /********************************************* SYSTEM **************************************************/
@@ -86,37 +84,40 @@ CHAR8S HMC5883L_SET_CONFIG_A(CHAR8U *CONFIG_A,CHAR8U RW)
 	CHAR8S flag = 0;
        CHAR8U DATA = 0;
 
-	if(RW !=0 && RW!=1) return -1; 		/*error R/W flag*/
-
-	if(RW == 0)
+		if(RW !=0 && RW!=1) 
+		{
+			return -1; 		/*error R/W flag*/
+		}
+		
+		if(RW == 0)
+		{
+			DATA = *CONFIG_A;
+			flag = i2c_write_1_byte_data(HMC5883L_SLAVE_ADDRESS,HMC5883L_REG_CONFIGA,DATA);
+			delay_us(20);		/*after set must be delay .*/
+			if(flag!=1)
 			{
-				DATA = *CONFIG_A;
-				flag = i2c_write_1_byte_data(HMC5883L_SLAVE_ADDRESS,HMC5883L_REG_CONFIGA,DATA);
-				delay_us(20);		/*after set must be delay .*/
-				if(flag!=1)
-					{
-					return -1 ; 	/* write fail ; error!*/
-					}
-				else
-					{
-					return 0 ; 	/*write success!*/
-					}
+				return -1 ; 	/* write fail ; error!*/
 			}
+			else
+			{
+				return 0 ; 	/*write success!*/
+			}
+		}
 
-	if(RW == 1)
-		      {
-				flag = i2c_read_1_byte_data(HMC5883L_SLAVE_ADDRESS,HMC5883L_REG_CONFIGA,&DATA);
-				delay_us(20); 	/*after set must be delay .*/
-				if(flag !=1)
-					{
-					return -1 ;	/*read fail ; error!*/
-					}
-				else
-					{
-					*CONFIG_A = DATA;
-					return 0 ;	/*read success!*/
-					}
+		if(RW == 1)
+		{
+			flag = i2c_read_1_byte_data(HMC5883L_SLAVE_ADDRESS,HMC5883L_REG_CONFIGA,&DATA);
+			delay_us(20); 	/*after set must be delay .*/
+			if(flag !=1)
+			{
+				return -1 ;	/*read fail ; error!*/
 			}
+			else
+			{
+				*CONFIG_A = DATA;
+				return 0 ;	/*read success!*/
+			}
+		}
 
 }
 /*--------------------------------------------------------------------------------------------------*/
@@ -142,37 +143,40 @@ CHAR8S HMC5883L_SET_CONFIG_B(CHAR8U *CONFIG_B,CHAR8U RW)
 	CHAR8S flag = 0;
        CHAR8U DATA = 0;
 
-	if(RW !=0 && RW!=1) return -1;	/*error R/W flag*/
+		if(RW !=0 && RW!=1) 
+		{
+			return -1;	/*error R/W flag*/
+		}
 
-	if(RW == 0)
+		if(RW == 0)
+		{
+			DATA = *CONFIG_B;
+			flag = i2c_write_1_byte_data(HMC5883L_SLAVE_ADDRESS,HMC5883L_REG_CONFIGB,DATA);
+			delay_us(20);	/*after set must be delay .*/
+			if(flag!=1)
 			{
-				DATA = *CONFIG_B;
-				flag = i2c_write_1_byte_data(HMC5883L_SLAVE_ADDRESS,HMC5883L_REG_CONFIGB,DATA);
-				delay_us(20);	/*after set must be delay .*/
-				if(flag!=1)
-					{
-					return -1 ;	/* write fail ; error!*/
-					}
-				else
-					{
-					return 0 ;	/* write success!*/
-					}
+				return -1 ;	/* write fail ; error!*/
 			}
+			else
+			{
+				return 0 ;	/* write success!*/
+			}
+		}
 
-	if(RW == 1)
-		      {
-				flag = i2c_read_1_byte_data(HMC5883L_SLAVE_ADDRESS,HMC5883L_REG_CONFIGB,&DATA);
-				delay_us(20);	/*after set must be delay .*/
-				if(flag !=1)
-					{
-					return -1 ; /*read fail ; error!*/
-					}
-				else
-					{
-					*CONFIG_B = DATA;
-					return 0 ; /*read success!*/
-					}
+		if(RW == 1)
+		{
+			flag = i2c_read_1_byte_data(HMC5883L_SLAVE_ADDRESS,HMC5883L_REG_CONFIGB,&DATA);
+			delay_us(20);	/*after set must be delay .*/
+			if(flag !=1)
+			{
+				return -1 ; /*read fail ; error!*/
 			}
+			else
+			{
+				*CONFIG_B = DATA;
+				return 0 ; /*read success!*/
+			}
+		}
 
 }
 /*--------------------------------------------------------------------------------------------------*/
@@ -304,7 +308,7 @@ CHAR8S HMC5883L_GET_3AXIS_DATA(AXIS_DATA  *DATA)
 				return 0; /* read success!*/
 			}
 		}
-	else
+		else
 		{
 			return -1; /* the RDY bit not Ready!!*/
 		}
@@ -358,8 +362,7 @@ CHAR8S HMC5883L_SELF_TEST(void)
 
 
 		printf("self test start !!\r\n");
-
-		
+	
 		/*==================== Positive bias test  ====================*/
 		printf("Positive bias test start !!\r\n");
 		/* step 1:  set config A */
@@ -405,8 +408,6 @@ CHAR8S HMC5883L_SELF_TEST(void)
 				break ;
 			}
 		}
-
-
 
 		/*check every axis are limit in 243 ~575 */
 		/*check 10 times */
@@ -474,14 +475,11 @@ CHAR8S HMC5883L_SELF_TEST(void)
 			printf("read HMC5883L set CFG A fail\r\n");
 			return -1;
 		}		
-
-
 		
 		/* dummy read , wait data stable */
 		dummy_cnt=0;
 		while(1)
 		{
-
 			delay_ms(7);	/* SPEC page8 ,say wait 6mS  */
 				
 			/* read X,Y,Z axis data */
@@ -492,8 +490,6 @@ CHAR8S HMC5883L_SELF_TEST(void)
 				break ;
 			}
 		}
-
-
 
 		/*check every axis are limit in -243 ~-575 */
 		/*check 10 times */
@@ -553,7 +549,32 @@ CHAR8S HMC5883L_SELF_TEST(void)
 		/*==================== Negative bias test  ====================*/		
 }
 /*--------------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------------*/
+/* simple calculate */
+/* calculate the HMC5883L azimuth*/
+/* return degree */
+/* the coordinates is 
+
+			y
+			^
+			|     /
+                   	|    /
+			|   /  
+                   	|  /		
+			| /     degree
+                   	|/  
+			------------> x
+
+     and point to South
+*/
+FLOAT HMC5883L_GET_AZIMUTH(AXIS_DATA data)
+{
+	FLOAT x_data,y_data,result_data,cal;
+	
+		/* calculate the azimuth */
+		result_data =atan2((FLOAT)data.Y_AXIS,(FLOAT)data.X_AXIS)*180.0/3.14159 +180.0;			
+		return result_data;
+
+}
+/*------------------------------------------------------------------------------------------------------*/
 /********************************************* SYSTEM **************************************************/
-
-
-#endif		//#ifndef __HMC5883L_FUNCTION__

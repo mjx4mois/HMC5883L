@@ -9,25 +9,25 @@
 #define __HMC5883L_HEADER__ 
 
 /*--------------------------------- Define SLAVE ADDRESS -------------------------------------*/
-#define HMC5883L_SLAVE_ADDRESS 	(0x3C)
+#define HMC5883L_SLAVE_ADDRESS 		(0x3C)
 /*--------------------------------- Define SLAVE ADDRESS -------------------------------------*/
 
 
 /* ------------- DEFINE HMC5883L REGISTER  ------------*/
 /*NOTE :   R-> Read only , W-> Write only , R/W ->Read / Write*/
-#define HMC5883L_REG_CONFIGA		(0x00)	/*R/W*/
-#define HMC5883L_REG_CONFIGB		(0x01)	/*R/W*/
-#define HMC5883L_REG_MODE			(0x02)	/*R/W*/
-#define HMC5883L_REG_X_MSB		(0x03)	/*R*/
-#define HMC5883L_REG_X_LSB			(0x04)	/*R*/
-#define HMC5883L_REG_Z_MSB		(0x05)	/*R*/
-#define HMC5883L_REG_Z_LSB			(0x06)	/*R*/
-#define HMC5883L_REG_Y_MSB		(0x07)	/*R*/
-#define HMC5883L_REG_Y_LSB			(0x08)	/*R*/
-#define HMC5883L_REG_STATUS		(0x09)	/*R*/
-#define HMC5883L_REG_IDA			(0x0A)	/*R*/	/*data must be : 0x48 */
-#define HMC5883L_REG_IDB			(0x0B)	/*R*/	/*data must be : 0x34 */
-#define HMC5883L_REG_IDC			(0x0C)	/*R*/	/*data must be : 0x33 */
+#define HMC5883L_REG_CONFIGA			(0x00)	/*R/W*/
+#define HMC5883L_REG_CONFIGB			(0x01)	/*R/W*/
+#define HMC5883L_REG_MODE				(0x02)	/*R/W*/
+#define HMC5883L_REG_X_MSB				(0x03)	/*R*/
+#define HMC5883L_REG_X_LSB				(0x04)	/*R*/
+#define HMC5883L_REG_Z_MSB				(0x05)	/*R*/
+#define HMC5883L_REG_Z_LSB				(0x06)	/*R*/
+#define HMC5883L_REG_Y_MSB				(0x07)	/*R*/
+#define HMC5883L_REG_Y_LSB				(0x08)	/*R*/
+#define HMC5883L_REG_STATUS			(0x09)	/*R*/
+#define HMC5883L_REG_IDA					(0x0A)	/*R*/	/*data must be : 0x48 */
+#define HMC5883L_REG_IDB					(0x0B)	/*R*/	/*data must be : 0x34 */
+#define HMC5883L_REG_IDC					(0x0C)	/*R*/	/*data must be : 0x33 */
 /* ------------- DEFINE HMC5883L REGISTER  ------------*/
 
 /* ------------- DEFINE HMC5883L PARAMETER  ------------*/
@@ -42,9 +42,9 @@
 #define HMC5883L_MEA_CNT_1_5HZ		(0x01<<2)	/* continous measurement mode , data rate :1.5 HZ */
 #define HMC5883L_MEA_CNT_3HZ			(0x02<<2)	/* continous measurement mode , data rate :3 HZ */
 #define HMC5883L_MEA_CNT_7_5HZ		(0x03<<2)	/* continous measurement mode , data rate :7.5 HZ */
-#define HMC5883L_MEA_CNT_15HZ		(0x04<<2)	/* continous measurement mode , data rate :15 HZ */ /* default */
-#define HMC5883L_MEA_CNT_30HZ		(0x05<<2)	/* continous measurement mode , data rate :30 HZ */
-#define HMC5883L_MEA_CNT_75HZ		(0x06<<2)	/* continous measurement mode , data rate :75 HZ */
+#define HMC5883L_MEA_CNT_15HZ			(0x04<<2)	/* continous measurement mode , data rate :15 HZ */ /* default */
+#define HMC5883L_MEA_CNT_30HZ			(0x05<<2)	/* continous measurement mode , data rate :30 HZ */
+#define HMC5883L_MEA_CNT_75HZ			(0x06<<2)	/* continous measurement mode , data rate :75 HZ */
 
 #define HMC5883L_MEA_MODE_NORMAL	(0x00<<0)	/* Normal measurement mode */
 #define HMC5883L_MEA_MODE_POS_BIAS	(0x01<<0)	/* Positive bais configuration for X,Y,Z */
@@ -68,7 +68,7 @@
 #define HMC5883L_HS						(0x01<<7)	/*set I2C speedup to 3.4MHz */
 #define HMC5883L_MODE_CNT				(0x00<0)	/*set continous measurement mode */
 #define HMC5883L_MODE_SINGLE			(0x01<0)	/*set single measurement mode */
-#define HMC5883L_MODE_IDLE			(0x02<0)	/*set IDLE mode */ /* or 0x03 alse IDLE mode */
+#define HMC5883L_MODE_IDLE				(0x02<0)	/*set IDLE mode */ /* or 0x03 alse IDLE mode */
 /*---- register: 0x02[Mode] parameters ------*
 /* ------------- DEFINE HMC5883L PARAMETER  ------------*/
 
@@ -100,7 +100,6 @@ typedef struct HMC5883L_ID
 	CHAR8U ID2;
 	CHAR8U ID3;
 }HMC5883L_ID_DATA;
-
 /*-------------------------------*/
 /* ------------- DEFINE HMC5883L VALUE  ------------*/
 
@@ -218,6 +217,26 @@ CHAR8S HMC5883L_GET_STATUS(CHAR8U  *STATUS);
 */
 CHAR8S HMC5883L_SELF_TEST(void);
 /*--------------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------------*/
+/* simple calculate */
+/*calculate the HMC5883L azimuth*/
+/* return degree */
+/* the coordinates is 
+
+			y
+			^
+			|     /
+                   	|    /
+			|   /  
+                   	|  /		
+			| /     degree
+                   	|/  
+			------------> x
+
+     and point to South
+*/
+FLOAT HMC5883L_GET_AZIMUTH(AXIS_DATA data);
+/*------------------------------------------------------------------------------------------------------*/
 /********************************************* SYSTEM **************************************************/
 
-#endif		//#ifndef __HMC5883L_HEADER__ 
+#endif		/*#ifndef __HMC5883L_HEADER__ */
